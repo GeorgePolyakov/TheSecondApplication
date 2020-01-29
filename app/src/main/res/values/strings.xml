@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">SecondProject</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="WelcomNote">SqlLiteApplication</string>
+    <string name="TitleCreateDatabase">Create Database</string>
+    <string name="ItemHeading">Heading</string>
+    <string name="ItemDescription">Description</string>
+</resources>
