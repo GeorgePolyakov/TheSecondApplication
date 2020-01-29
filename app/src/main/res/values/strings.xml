@@ -6,4 +6,5 @@
     <string name="TitleCreateDatabase">Create Database</string>
     <string name="ItemHeading">Heading</string>
     <string name="ItemDescription">Description</string>
+    <string name="textviewTest">TextView</string>
 </resources>

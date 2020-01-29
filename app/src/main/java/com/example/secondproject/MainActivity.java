@@ -4,8 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.provider.Settings;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.secondproject.DataBase.MyDataBaseClass;
@@ -21,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Music> music;
     private RecyclerView numbersList;
     private NumbersRecycleAdapter numbersRecycleAdapter;
+    private TextView TestTextView;
 
     public void InitializeList()
     {
@@ -51,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        TestTextView = (TextView)findViewById(R.id.textViewTest);
+        TestTextView.setText( Environment.getRootDirectory().getAbsolutePath());
         InitializeList();
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         numbersList = findViewById(R.id.recyclerView);
@@ -58,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
         numbersList.setHasFixedSize(true);
         numbersRecycleAdapter = new NumbersRecycleAdapter(10, this,music);
         numbersList.setAdapter(numbersRecycleAdapter);
+        Toast toast = Toast.makeText(getApplicationContext(),
+                "Пора покормить кота!", Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     public void createDataBase(View view){

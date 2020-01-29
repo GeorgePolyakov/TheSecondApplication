@@ -31,6 +31,10 @@ public class NumbersRecycleAdapter extends RecyclerView.Adapter<NumbersRecycleAd
     List<Music> song;
     private Context parent;
 
+    public void EmptyMethode(){
+
+    }
+
     public NumbersRecycleAdapter(int numbersOfItems, Context parent, List<Music> song) {
         numberItems = numbersOfItems;
         viewHolderCount = 0;
@@ -47,8 +51,7 @@ public class NumbersRecycleAdapter extends RecyclerView.Adapter<NumbersRecycleAd
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(layoutIdForListItem, parent, false);
         NumberViewHolder viewHolder = new NumberViewHolder(view);
-
-        Log.d("myLog", viewHolderCount + " ");
+        Log.d("myLog1", viewHolderCount + " ");
         viewHolderCount++;
         return viewHolder;
     }
