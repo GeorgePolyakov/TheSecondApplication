@@ -7,4 +7,7 @@
     <string name="ItemHeading">Heading</string>
     <string name="ItemDescription">Description</string>
     <string name="textviewTest">TextView</string>
+    <string name="buttonPlay">Play</string>
+    <string name="buttonPause">Pause</string>
+    <string name="buttonStop">Stop</string>
 </resources>
