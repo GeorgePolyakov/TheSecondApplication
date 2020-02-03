@@ -9,14 +9,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.example.secondproject.MainActivity">
+        <activity android:name=".PickSingerActivity"></activity>
+
+        <provider
+            android:name=".MusicContentProvider"
+            android:authorities="com.example.secondproject.MusicContentProvider"></provider>
+
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".MusicService"/>
+
+        <service android:name=".MusicService" />
     </application>
 
 </manifest>

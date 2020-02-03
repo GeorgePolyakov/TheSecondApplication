@@ -6,10 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
-
 public class MyDataBaseClass extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "UniStudentInformation.db";
+    private static final String DATABASE_NAME = "MusicPlayer.db";
     private static final int DATABASE_VERSION = 1;
     private String queryToCreateDatabase = "create table UniStudent (ID INTEGER PRIMARY KEY AUTOINCREMENT" +
             ",Name VARCHAR(255), Email VARCHAr(255), Phone INTEGER)";

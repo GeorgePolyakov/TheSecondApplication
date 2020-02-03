@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<music>
+    <record
+        title="No Love"
+        singer="Eminem"
+        genre="rap"
+        path="eminem"/>
+    <record
+        title="I am on war as on you"
+        singer="Agata Cristi"
+        genre="rock"
+        path="on_the_war"/>
+    <record
+        title="Rains is Gun"
+        singer="Animals"
+        genre="pop"
+        path="rains_is_guns"/>
+    <record
+        title="No Love"
+        singer="Eminem"
+        genre="rap"
+        path="eminem"/>
+    <record
+        title="The candles went out"
+        singer="Timur Mitsuraev"
+        genre="rap"
+        path="the_candles_went_out"/>
+    <record
+        title="Gansta Paradise"
+        singer="Coolio"
+        genre="rap"
+        path="gansta_paradise"/>
+    <record
+        title="Someone like you"
+        singer="Adele"
+        genre="pop"
+        path="someone_like_you"/>
+    <record
+        title="C U When u get there"
+        singer="Coolio"
+        genre="rap"
+        path="cu_when_u_get_there"/>
+    <record
+        title="Mockingbird"
+        singer="Eminem"
+        genre="rap"
+        path="mockingbird"/>
+    <record
+        title="Numb"
+        singer="Linkin Park"
+        genre="rock"
+        path="numb"/>
+</music>

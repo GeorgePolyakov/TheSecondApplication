@@ -2,14 +2,19 @@ package com.example.secondproject;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
+
+import java.io.IOException;
 
 public class MusicService extends Service {
 
     private final IBinder mBinder = new LocalBinder();
     private MediaPlayer player;
+    Uri mediaPath;
 
     public class LocalBinder extends Binder {
         MusicService getService() {
@@ -19,8 +24,10 @@ public class MusicService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        player = MediaPlayer.create(this, R.raw.rains_is_guns);
-        player.setLooping(true);
+        player = new MediaPlayer();
+        //player = MediaPlayer.create(this, R.raw.rains_is_guns);
+        String path = "rains_is_guns";
+        //int soundId = res.getIdentifier(path, "raw", this.getPackageName());
         return mBinder;
     }
 
@@ -33,8 +40,20 @@ public class MusicService extends Service {
         player.pause();
     }
 
-    public void playerStart(int musicPosition) {
+    public void playerStart(int musicPosition,String songId) {
+        Resources res = this.getResources();
+
+        int soundId = res.getIdentifier(songId, "raw", this.getPackageName());
+        mediaPath = Uri.parse("android.resource://" + getPackageName() + "/" + soundId);
+        try {
+            player.setDataSource(getApplicationContext(), mediaPath);
+            player.prepare();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         player.seekTo(musicPosition);
-        player.start();
+            player.start();
+
+
     }
 }
