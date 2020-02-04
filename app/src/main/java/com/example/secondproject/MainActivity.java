@@ -3,6 +3,7 @@ package com.example.secondproject;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
@@ -18,9 +19,12 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -32,11 +36,12 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences sPref;
     Button createDataBase;
     String songId;
+    TextView textView;
     private RecyclerView recycleView;
     private RecyclerView.Adapter adapter;
     private ArrayList<Music> music;
     private RecyclerView numbersList;
-    private NumbersRecycleAdapter numbersRecycleAdapter;
+   // private NumbersRecycleAdapter numbersRecycleAdapter;
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -80,15 +85,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        textView = findViewById(R.id.titleOfSong);
         fiilDatabase();
         createDataBase = findViewById(R.id.button);
         InitializeList();
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+       /* LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         numbersList = findViewById(R.id.recyclerView);
         numbersList.setLayoutManager(layoutManager);
         numbersList.setHasFixedSize(true);
         numbersRecycleAdapter = new NumbersRecycleAdapter(10, this, music);
-        numbersList.setAdapter(numbersRecycleAdapter);
+        numbersList.setAdapter(numbersRecycleAdapter);*/
         savePosition(0);
     }
 
@@ -163,10 +169,11 @@ public class MainActivity extends AppCompatActivity {
             while (eventType != XmlPullParser.END_DOCUMENT) {
                 if ((eventType == XmlPullParser.START_TAG)
                         && (_xml.getName().equals("record"))) {
-                    String title = _xml.getAttributeValue(0);
-                    String singerName = _xml.getAttributeValue(1);
-                    String genreName = _xml.getAttributeValue(2);
-                    String pathMusic = _xml.getAttributeValue(3);
+                    String genreName = _xml.getAttributeValue(0);
+                    String pathMusic = _xml.getAttributeValue(1);
+                    String singerName = _xml.getAttributeValue(2);
+                    String title = _xml.getAttributeValue(3);
+                    textView.setText(title + "");
                     values.put(MusicContentProvider.TITLE_OF_SONG, title);
                     values.put(MusicContentProvider.SINGER_NAME, singerName);
                     values.put(MusicContentProvider.GENRE_OF_MUSIC, genreName);
@@ -184,7 +191,6 @@ public class MainActivity extends AppCompatActivity {
         } finally {
             _xml.close();
         }
-
     }
 
     public void createDataBase(View view) {

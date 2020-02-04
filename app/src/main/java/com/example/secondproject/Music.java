@@ -1,8 +1,10 @@
 package com.example.secondproject;
 
 public class Music {
-    private String authorName;
     private String songName;
+    private String authorName;
+
+
 
     public String getAuthorName() {
         return authorName;
