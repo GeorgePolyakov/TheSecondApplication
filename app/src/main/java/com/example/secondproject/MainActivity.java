@@ -4,10 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -37,11 +39,14 @@ public class MainActivity extends AppCompatActivity {
     Button createDataBase;
     String songId;
     TextView textView;
+    BroadcastReceiver getKeyReciver;
+    Context context;
+    String data = "";
     private RecyclerView recycleView;
     private RecyclerView.Adapter adapter;
     private ArrayList<Music> music;
     private RecyclerView numbersList;
-   // private NumbersRecycleAdapter numbersRecycleAdapter;
+
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -57,30 +62,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void InitializeList() {
-        Music music1 = new Music("Adele", "Someone like you");
-        Music music2 = new Music("Coolio", "Gansta Paradise");
-        Music music3 = new Music("Eminem", "I am not afraid");
-        Music music4 = new Music("Eminem", "Lose yourself");
-        Music music5 = new Music("Coolio", "C U get there");
-        Music music6 = new Music("in Point ", "Never give up");
-        Music music7 = new Music("Eminem", "Legacy");
-        Music music8 = new Music("Rhiana", "Lie the way to love");
-        Music music9 = new Music("Rhiana", "The Monster");
-        Music music10 = new Music("In Point", "Orlovskiy Diamond");
-        music = new ArrayList<>();
-        music.add(music1);
-        music.add(music2);
-        music.add(music3);
-        music.add(music4);
-        music.add(music5);
-        music.add(music6);
-        music.add(music7);
-        music.add(music8);
-        music.add(music9);
-        music.add(music10);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,14 +69,36 @@ public class MainActivity extends AppCompatActivity {
         textView = findViewById(R.id.titleOfSong);
         fiilDatabase();
         createDataBase = findViewById(R.id.button);
-        InitializeList();
-       /* LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        numbersList = findViewById(R.id.recyclerView);
-        numbersList.setLayoutManager(layoutManager);
-        numbersList.setHasFixedSize(true);
-        numbersRecycleAdapter = new NumbersRecycleAdapter(10, this, music);
-        numbersList.setAdapter(numbersRecycleAdapter);*/
         savePosition(0);
+        context = this;
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("data");
+        getKeyReciver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent != null)
+                    Toast.makeText(context, intent.getStringExtra("data").toString(), Toast.LENGTH_LONG).show();
+                String URL = "content://com.example.secondproject.MusicContentProvider/friends";
+                Uri friends = Uri.parse(URL);
+                data = intent.getExtras().getString("data");
+                Cursor c = getContentResolver().query(friends, null, null, null, "title");
+
+                if (c.moveToFirst()) {
+                    do {
+                            if (data.equals(c.getString(c.getColumnIndex(MusicContentProvider.TITLE_OF_SONG)))) {
+                                songId = c.getString(c.getColumnIndex(MusicContentProvider.PATH_TO_MUSIC)) ;
+                                Toast.makeText(getBaseContext(),
+                                        songId+ "", Toast.LENGTH_LONG).show();
+                            }
+
+                    } while (c.moveToNext());
+                }
+
+                textView.setText(data);
+            }
+        };
+        registerReceiver(getKeyReciver, filter);
     }
 
     @Override
@@ -125,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         if (mBound) {
             sPref = getPreferences(MODE_PRIVATE);
             musicPosition = sPref.getInt("musicPositionKey", 0);
-            mService.playerStart(musicPosition, songId);
+            savePosition(mService.playerStart(musicPosition, songId));
         }
     }
 

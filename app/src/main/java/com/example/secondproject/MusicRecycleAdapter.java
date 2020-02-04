@@ -1,11 +1,16 @@
 package com.example.secondproject;
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,10 +23,7 @@ public class MusicRecycleAdapter extends RecyclerView.Adapter< MusicRecycleAdapt
     private int numberItems;
     List<String> song;
     private Context parent;
-
-    public void EmptyMethode(){
-
-    }
+    private BroadcastReceiver myBroadcastReceiver;
 
     public  MusicRecycleAdapter(int numbersOfItems, Context parent, List<String> song) {
         numberItems = numbersOfItems;
@@ -34,6 +36,7 @@ public class MusicRecycleAdapter extends RecyclerView.Adapter< MusicRecycleAdapt
     @NonNull
     @Override
     public MusicRecycleAdapter.MusicViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        myBroadcastReceiver  = new MyReceiver();
         Context context = parent.getContext();
         int layoutIdForListItem = R.layout.recycle_list_item;
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -72,9 +75,24 @@ public class MusicRecycleAdapter extends RecyclerView.Adapter< MusicRecycleAdapt
             listItemNumberView.setText(song.get(ListIndex));
         }
 
+        public void Send(String key) {
+            final IntentFilter intentFilter = new IntentFilter("xyi");
+            parent.registerReceiver(myBroadcastReceiver, intentFilter);
+            Intent intent = new Intent("data");
+            intent.putExtra("data", key);
+            parent.sendBroadcast(intent);
+
+        }
+
         @Override
         public void onClick(View v) {
-            //нажатие на кнопку
+
+            Send(listItemNumberView.getText().toString());
+            Toast.makeText(v.getContext(),  listItemNumberView.getText(), Toast.LENGTH_LONG).show();
+
+            ((Activity) parent).finish();
+            parent.unregisterReceiver(myBroadcastReceiver);
+
         }
     }
 }

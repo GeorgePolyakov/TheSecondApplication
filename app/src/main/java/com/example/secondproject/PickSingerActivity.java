@@ -4,6 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.BroadcastReceiver;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,10 +15,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -37,23 +38,19 @@ public class PickSingerActivity extends AppCompatActivity {
         String URL = "content://com.example.secondproject.MusicContentProvider/friends";
         Uri friends = Uri.parse(URL);
         Cursor c = getContentResolver().query(friends, null, null, null, "title");
-        String result = "Javacodegeeks Results:";
-        if (!c.moveToFirst()) {
-            Toast.makeText(this, result + " no content yet!", Toast.LENGTH_LONG).show();
-        } else {
+        if (c.moveToFirst()) {
             do {
 
                 spinnerSingerAdapter.add(c.getString(c.getColumnIndex(MusicContentProvider.SINGER_NAME)));
                 spinnerGenreAdapter.add(c.getString(c.getColumnIndex(MusicContentProvider.GENRE_OF_MUSIC)));
 
             } while (c.moveToNext());
-            Toast.makeText(this, result, Toast.LENGTH_LONG).show();
         }
         spinnerSingerAdapter = sortAdapter(spinnerSingerAdapter);
         spinnerGenreAdapter = sortAdapter(spinnerGenreAdapter);
     }
 
-    public void recycleFiller()
+    public void recycleFiller(boolean state)
     {
         List songCurrentSinger = new ArrayList();
         String URL = "content://com.example.secondproject.MusicContentProvider/friends";
@@ -64,9 +61,15 @@ public class PickSingerActivity extends AppCompatActivity {
             Toast.makeText(this, result + " no content yet!", Toast.LENGTH_LONG).show();
         } else {
             do {
-
-                if(authorName.equals(c.getString(c.getColumnIndex(MusicContentProvider.SINGER_NAME))))
-                    songCurrentSinger.add(c.getString(c.getColumnIndex(MusicContentProvider.TITLE_OF_SONG)));
+                 if(state==true) {
+                     if (authorName.equals(c.getString(c.getColumnIndex(MusicContentProvider.SINGER_NAME)))) {
+                         songCurrentSinger.add(c.getString(c.getColumnIndex(MusicContentProvider.TITLE_OF_SONG)));
+                     }
+                 }else{
+                     if (genre.equals(c.getString(c.getColumnIndex(MusicContentProvider.GENRE_OF_MUSIC)))) {
+                         songCurrentSinger.add(c.getString(c.getColumnIndex(MusicContentProvider.TITLE_OF_SONG)));
+                     }
+                 }
 
             } while (c.moveToNext());
             Toast.makeText(this, result, Toast.LENGTH_LONG).show();
@@ -102,7 +105,7 @@ public class PickSingerActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
                 authorName = spinnerSinger.getSelectedItem().toString();
-                recycleFiller();
+                recycleFiller(true);
             }
 
             @Override
@@ -118,8 +121,8 @@ public class PickSingerActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
-                genre = spinnerSinger.getSelectedItem().toString();
-                Toast.makeText(getApplicationContext(),genre,Toast. LENGTH_SHORT).show();
+                genre = spinnerGenre.getSelectedItem().toString();
+                recycleFiller(false);
             }
 
             @Override
@@ -127,6 +130,12 @@ public class PickSingerActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
 
     }
 }

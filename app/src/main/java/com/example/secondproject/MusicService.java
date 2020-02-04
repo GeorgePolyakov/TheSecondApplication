@@ -7,6 +7,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -40,11 +41,12 @@ public class MusicService extends Service {
         player.pause();
     }
 
-    public void playerStart(int musicPosition,String songId) {
+    public int  playerStart(int musicPosition,String songId) {
         Resources res = this.getResources();
-
         int soundId = res.getIdentifier(songId, "raw", this.getPackageName());
         mediaPath = Uri.parse("android.resource://" + getPackageName() + "/" + soundId);
+        Toast.makeText(getBaseContext(),
+                songId + "", Toast.LENGTH_LONG).show();
         try {
             player.setDataSource(getApplicationContext(), mediaPath);
             player.prepare();
@@ -54,6 +56,6 @@ public class MusicService extends Service {
         player.seekTo(musicPosition);
             player.start();
 
-
+        return musicPosition;
     }
 }

@@ -36,6 +36,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
        // holder.textViewDesc.setText(music.getDesc());
     }
 
+
     @Override
     public int getItemCount() {
         return music.size();
