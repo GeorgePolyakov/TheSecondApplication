@@ -41,7 +41,7 @@ public class MusicService extends Service {
         player.pause();
     }
 
-    public int  playerStart(int musicPosition,String songId) {
+    public int playerStart(int musicPosition,String songId) {
         Resources res = this.getResources();
         int soundId = res.getIdentifier(songId, "raw", this.getPackageName());
         mediaPath = Uri.parse("android.resource://" + getPackageName() + "/" + soundId);
@@ -56,6 +56,6 @@ public class MusicService extends Service {
         player.seekTo(musicPosition);
             player.start();
 
-        return musicPosition;
+        return  player.getCurrentPosition();
     }
 }

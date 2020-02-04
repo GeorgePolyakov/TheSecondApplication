@@ -18,15 +18,14 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -36,16 +35,18 @@ public class MainActivity extends AppCompatActivity {
     boolean mBound = false;
     public int musicPosition = 0;
     SharedPreferences sPref;
-    Button createDataBase;
+    SharedPreferences sPref1;
     String songId;
-    TextView textView;
+    TextView textViewTitle;
+    TextView textViewSinger;
+    TextView textViewGenre;
     BroadcastReceiver getKeyReciver;
     Context context;
     String data = "";
     private RecyclerView recycleView;
     private RecyclerView.Adapter adapter;
     private ArrayList<Music> music;
-    private RecyclerView numbersList;
+    private static final String SHARED_PREFS = "sharedPrefs";
 
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -66,12 +67,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        textView = findViewById(R.id.titleOfSong);
+        textViewTitle = findViewById(R.id.titleOfSong);
+        textViewSinger = findViewById(R.id.textView2);
+        textViewGenre = findViewById(R.id.textView3);
         fiilDatabase();
-        createDataBase = findViewById(R.id.button);
-        savePosition(0);
         context = this;
 
+        songId = loadData(this);
+        Toast.makeText(getBaseContext(),
+                songId + "", Toast.LENGTH_LONG).show();
         IntentFilter filter = new IntentFilter();
         filter.addAction("data");
         getKeyReciver = new BroadcastReceiver() {
@@ -86,20 +90,39 @@ public class MainActivity extends AppCompatActivity {
 
                 if (c.moveToFirst()) {
                     do {
-                            if (data.equals(c.getString(c.getColumnIndex(MusicContentProvider.TITLE_OF_SONG)))) {
-                                songId = c.getString(c.getColumnIndex(MusicContentProvider.PATH_TO_MUSIC)) ;
-                                Toast.makeText(getBaseContext(),
-                                        songId+ "", Toast.LENGTH_LONG).show();
-                            }
+                        if (data.equals(c.getString(c.getColumnIndex(MusicContentProvider.TITLE_OF_SONG)))) {
+                            songId = c.getString(c.getColumnIndex(MusicContentProvider.PATH_TO_MUSIC));
+                            textViewTitle.setText(data);
+                            textViewSinger.setText(c.getString(c.getColumnIndex(MusicContentProvider.SINGER_NAME)));
+                            textViewGenre.setText(c.getString(c.getColumnIndex(MusicContentProvider.GENRE_OF_MUSIC)));
+                            Toast.makeText(getBaseContext(),
+                                    songId + "", Toast.LENGTH_LONG).show();
+                            saveData(context,songId);
+                            savePosition(0);
+                        }
 
                     } while (c.moveToNext());
                 }
 
-                textView.setText(data);
+
             }
         };
         registerReceiver(getKeyReciver, filter);
     }
+
+    public static String loadData(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        String text = sharedPreferences.getString("KEY", "");
+        return text;
+    }
+
+    public static void saveData(Context context,String position) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("KEY", position);
+        editor.apply();
+    }
+
 
     @Override
     protected void onStart() {
@@ -124,11 +147,16 @@ public class MainActivity extends AppCompatActivity {
         ed.commit();
     }
 
+
+
     public void onClickStart(View v) {
         if (mBound) {
             sPref = getPreferences(MODE_PRIVATE);
             musicPosition = sPref.getInt("musicPositionKey", 0);
+            //String input = mService.playerStart(musicPosition, songId);
+            // saveAddress(input);
             savePosition(mService.playerStart(musicPosition, songId));
+
         }
     }
 
@@ -148,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
     public void onClickPick(View v) {
         Intent intent = new Intent(this, PickSingerActivity.class);
         startActivity(intent);
+        //   onStop();
     }
 
     public void deleteAllBirthdays() {
@@ -176,7 +205,6 @@ public class MainActivity extends AppCompatActivity {
                     String pathMusic = _xml.getAttributeValue(1);
                     String singerName = _xml.getAttributeValue(2);
                     String title = _xml.getAttributeValue(3);
-                    textView.setText(title + "");
                     values.put(MusicContentProvider.TITLE_OF_SONG, title);
                     values.put(MusicContentProvider.SINGER_NAME, singerName);
                     values.put(MusicContentProvider.GENRE_OF_MUSIC, genreName);
@@ -193,24 +221,6 @@ public class MainActivity extends AppCompatActivity {
 
         } finally {
             _xml.close();
-        }
-    }
-
-    public void createDataBase(View view) {
-        String URL = "content://com.example.secondproject.MusicContentProvider/friends";
-        Uri friends = Uri.parse(URL);
-        Cursor c = getContentResolver().query(friends, null, null, null, "title");
-        String result = "Javacodegeeks Results:";
-        if (!c.moveToFirst()) {
-            Toast.makeText(this, result + " no content yet!", Toast.LENGTH_LONG).show();
-        } else {
-            do {
-                result = result + "\n" + c.getString(c.getColumnIndex(MusicContentProvider.TITLE_OF_SONG)) +
-                        " with id " + c.getString(c.getColumnIndex(MusicContentProvider.ID)) +
-                        " has birthday: " + c.getString(c.getColumnIndex(MusicContentProvider.SINGER_NAME)) +
-                        " has genre: " + c.getString(c.getColumnIndex(MusicContentProvider.GENRE_OF_MUSIC));
-            } while (c.moveToNext());
-            Toast.makeText(this, result, Toast.LENGTH_LONG).show();
         }
     }
 
