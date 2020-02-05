@@ -1,9 +1,6 @@
 package com.example.secondproject;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentValues;
@@ -25,7 +22,6 @@ import android.widget.Toast;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
     boolean mBound = false;
     public int musicPosition = 0;
     SharedPreferences sPref;
-    SharedPreferences sPref1;
     String songId;
     TextView textViewTitle;
     TextView textViewSinger;
@@ -75,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 if (intent != null)
                     Toast.makeText(context, intent.getStringExtra("data").toString(), Toast.LENGTH_LONG).show();
+               // onStop();
                 String URL = "content://com.example.secondproject.MusicContentProvider/friends";
                 Uri friends = Uri.parse(URL);
                 data = intent.getExtras().getString("data");
@@ -136,16 +132,11 @@ public class MainActivity extends AppCompatActivity {
         ed.commit();
     }
 
-
-
     public void onClickStart(View v) {
         if (mBound) {
             sPref = getPreferences(MODE_PRIVATE);
             musicPosition = sPref.getInt("musicPositionKey", 0);
-            //String input = mService.playerStart(musicPosition, songId);
-            // saveAddress(input);
             savePosition(mService.playerStart(musicPosition, songId));
-
         }
     }
 

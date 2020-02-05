@@ -9,8 +9,6 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.widget.Toast;
 
-import java.io.IOException;
-
 public class MusicService extends Service {
 
     private final IBinder mBinder = new LocalBinder();
@@ -55,5 +53,11 @@ public class MusicService extends Service {
             player.start();
 
         return  player.getCurrentPosition();
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
     }
 }

@@ -1,6 +1,7 @@
 package com.example.secondproject;
 
 import java.util.HashMap;
+
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -16,35 +17,27 @@ import android.text.TextUtils;
 import android.util.Log;
 
 public class MusicContentProvider extends ContentProvider {
-    // fields for my content provider
+
     static final String PROVIDER_NAME = "com.example.secondproject.MusicContentProvider";
     static final String URL = "content://" + PROVIDER_NAME + "/friends";
     static final Uri CONTENT_URI = Uri.parse(URL);
-
     static final String ID = "id";
     static final String TITLE_OF_SONG = "title";
     static final String SINGER_NAME = "name";
     static final String GENRE_OF_MUSIC = "genre";
     static final String PATH_TO_MUSIC = "path";
-
-    // integer values used in content URI
     static final int FRIENDS = 1;
     static final int FRIENDS_ID = 2;
-
+    static final UriMatcher uriMatcher;
+    private static HashMap<String, String> BirthMap;
     DBHelper dbHelper;
 
-    // projection map for a query
-    private static HashMap<String, String> BirthMap;
-
-    // maps content URI "patterns" to the integer values that were set above
-    static final UriMatcher uriMatcher;
-    static{
+    static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(PROVIDER_NAME, "friends", FRIENDS);
         uriMatcher.addURI(PROVIDER_NAME, "friends/#", FRIENDS_ID);
     }
 
-    // database declarations
     private SQLiteDatabase database;
     static final String DATABASE_NAME = "BirthdayReminder";
     static final String TABLE_NAME = "birthTable";
@@ -57,18 +50,14 @@ public class MusicContentProvider extends ContentProvider {
                     " genre TEXT NOT NULL, " +
                     " path TEXT NOT NULL);";
 
-
-    // class that creates and manages the provider's database
     private static class DBHelper extends SQLiteOpenHelper {
 
         public DBHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
-            // TODO Auto-generated constructor stub
         }
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            // TODO Auto-generated method stub
             db.execSQL(CREATE_TABLE);
         }
 
@@ -77,20 +66,18 @@ public class MusicContentProvider extends ContentProvider {
             Log.w(DBHelper.class.getName(),
                     "Upgrading database from version " + oldVersion + " to "
                             + newVersion + ". Old data will be destroyed");
-            db.execSQL("DROP TABLE IF EXISTS " +  TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
             onCreate(db);
         }
     }
 
     @Override
     public boolean onCreate() {
-        // TODO Auto-generated method stub
         Context context = getContext();
         dbHelper = new DBHelper(context);
-        // permissions to be writable
         database = dbHelper.getWritableDatabase();
 
-        if(database == null)
+        if (database == null)
             return false;
         else
             return true;
@@ -99,31 +86,25 @@ public class MusicContentProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
-        // TODO Auto-generated method stub
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-        // the TABLE_NAME to query on
         queryBuilder.setTables(TABLE_NAME);
 
         switch (uriMatcher.match(uri)) {
-            // maps all database column names
             case FRIENDS:
                 queryBuilder.setProjectionMap(BirthMap);
                 break;
             case FRIENDS_ID:
-                queryBuilder.appendWhere( ID + "=" + uri.getLastPathSegment());
+                queryBuilder.appendWhere(ID + "=" + uri.getLastPathSegment());
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
-        if (sortOrder == null || sortOrder == ""){
-            // No sorting-> sort on names by default
+        if (sortOrder == null || sortOrder == "") {
             sortOrder = TITLE_OF_SONG;
         }
         Cursor cursor = queryBuilder.query(database, projection, selection,
                 selectionArgs, null, null, sortOrder);
-        /**
-         * register to watch a content URI for changes
-         */
+
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
 
         return cursor;
@@ -135,7 +116,7 @@ public class MusicContentProvider extends ContentProvider {
         long row = database.insert(TABLE_NAME, "", values);
 
         // If record is added successfully
-        if(row > 0) {
+        if (row > 0) {
             Uri newUri = ContentUris.withAppendedId(CONTENT_URI, row);
             getContext().getContentResolver().notifyChange(newUri, null);
             return newUri;
@@ -149,7 +130,7 @@ public class MusicContentProvider extends ContentProvider {
         // TODO Auto-generated method stub
         int count = 0;
 
-        switch (uriMatcher.match(uri)){
+        switch (uriMatcher.match(uri)) {
             case FRIENDS:
                 count = database.update(TABLE_NAME, values, selection, selectionArgs);
                 break;
@@ -160,7 +141,7 @@ public class MusicContentProvider extends ContentProvider {
                                 selection + ')' : ""), selectionArgs);
                 break;
             default:
-                throw new IllegalArgumentException("Unsupported URI " + uri );
+                throw new IllegalArgumentException("Unsupported URI " + uri);
         }
         getContext().getContentResolver().notifyChange(uri, null);
         return count;
@@ -170,14 +151,14 @@ public class MusicContentProvider extends ContentProvider {
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         // TODO Auto-generated method stub
         int count = 0;
-        switch (uriMatcher.match(uri)){
+        switch (uriMatcher.match(uri)) {
             case FRIENDS:
-                // delete all the records of the table
+
                 count = database.delete(TABLE_NAME, selection, selectionArgs);
                 break;
             case FRIENDS_ID:
                 String id = uri.getLastPathSegment(); //gets the id
-                count = database.delete( TABLE_NAME, ID +  " = " + id +
+                count = database.delete(TABLE_NAME, ID + " = " + id +
                         (!TextUtils.isEmpty(selection) ? " AND (" +
                                 selection + ')' : ""), selectionArgs);
                 break;
@@ -192,7 +173,7 @@ public class MusicContentProvider extends ContentProvider {
     @Override
     public String getType(Uri uri) {
         // TODO Auto-generated method stub
-        switch (uriMatcher.match(uri)){
+        switch (uriMatcher.match(uri)) {
             // Get all friend-birthday records
             case FRIENDS:
                 return "vnd.android.cursor.dir/vnd.example.friends";
