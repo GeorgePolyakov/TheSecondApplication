@@ -189,16 +189,16 @@ public class MainActivity extends AppCompatActivity {
         deleteAllMusics();
         ContentValues values = new ContentValues();
         Resources res = this.getResources();
-        XmlResourceParser _xml = res.getXml(R.xml.fill_music_data);
+        XmlResourceParser xmlResParser = res.getXml(R.xml.fill_music_data);
         try {
-            int eventType = _xml.getEventType();
+            int eventType = xmlResParser.getEventType();
             while (eventType != XmlPullParser.END_DOCUMENT) {
                 if ((eventType == XmlPullParser.START_TAG)
-                        && (_xml.getName().equals("record"))) {
-                    String genreName = _xml.getAttributeValue(0);
-                    String pathMusic = _xml.getAttributeValue(1);
-                    String singerName = _xml.getAttributeValue(2);
-                    String title = _xml.getAttributeValue(3);
+                        && (xmlResParser.getName().equals("record"))) {
+                    String genreName = xmlResParser.getAttributeValue(0);
+                    String pathMusic = xmlResParser.getAttributeValue(1);
+                    String singerName = xmlResParser.getAttributeValue(2);
+                    String title = xmlResParser.getAttributeValue(3);
                     values.put(MusicContentProvider.TITLE_OF_SONG, title);
                     values.put(MusicContentProvider.SINGER_NAME, singerName);
                     values.put(MusicContentProvider.GENRE_OF_MUSIC, genreName);
@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
                     Uri uri = getContentResolver().insert(
                             MusicContentProvider.CONTENT_URI, values);
                 }
-                eventType = _xml.next();
+                eventType = xmlResParser.next();
             }
         } catch (XmlPullParserException e) {
             Log.e("Test", e.getMessage(), e);
@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
             Log.e("Test", e.getMessage(), e);
 
         } finally {
-            _xml.close();
+            xmlResParser.close();
         }
     }
 

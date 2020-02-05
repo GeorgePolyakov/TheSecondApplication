@@ -24,7 +24,6 @@ public class MusicService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         player = new MediaPlayer();
-        String path = "rains_is_guns";
         return mBinder;
     }
 
@@ -53,7 +52,6 @@ public class MusicService extends Service {
         }
         player.seekTo(musicPosition);
         player.start();
-
         return player.getCurrentPosition();
     }
 
