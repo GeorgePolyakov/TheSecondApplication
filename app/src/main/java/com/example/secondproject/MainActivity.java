@@ -55,23 +55,17 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void setStarttingValueTextView(String key)
-    {
+    public void setStarttingValueTextView(String keyString) {
         String URL = "content://com.example.secondproject.MusicContentProvider/friends";
         Uri friends = Uri.parse(URL);
         Cursor c = getContentResolver().query(friends, null, null, null, "title");
-
         if (c.moveToFirst()) {
+            Toast.makeText(context, keyString, Toast.LENGTH_LONG).show();
             do {
-                if (songId.equals(c.getString(c.getColumnIndex(MusicContentProvider.TITLE_OF_SONG)))) {
-                    songId = c.getString(c.getColumnIndex(MusicContentProvider.PATH_TO_MUSIC));
-                    textViewTitle.setText(data);
+                if (keyString.equals(c.getString(c.getColumnIndex(MusicContentProvider.PATH_TO_MUSIC)))) {
+                    textViewTitle.setText(c.getString(c.getColumnIndex(MusicContentProvider.TITLE_OF_SONG)));
                     textViewSinger.setText(c.getString(c.getColumnIndex(MusicContentProvider.SINGER_NAME)));
                     textViewGenre.setText(c.getString(c.getColumnIndex(MusicContentProvider.GENRE_OF_MUSIC)));
-                    Toast.makeText(getBaseContext(),
-                            songId + "", Toast.LENGTH_LONG).show();
-                    saveData(context, songId);
-                    savePosition(0);
                 }
 
             } while (c.moveToNext());
@@ -88,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         fiilDatabase();
         context = this;
         songId = loadData(this);
-
+        setStarttingValueTextView(songId);
         IntentFilter filter = new IntentFilter();
         filter.addAction("data");
         getKeyReciver = new BroadcastReceiver() {
