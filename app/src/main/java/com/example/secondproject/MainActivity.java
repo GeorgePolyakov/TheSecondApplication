@@ -55,7 +55,28 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    public void setStarttingValueTextView(String key)
+    {
+        String URL = "content://com.example.secondproject.MusicContentProvider/friends";
+        Uri friends = Uri.parse(URL);
+        Cursor c = getContentResolver().query(friends, null, null, null, "title");
 
+        if (c.moveToFirst()) {
+            do {
+                if (songId.equals(c.getString(c.getColumnIndex(MusicContentProvider.TITLE_OF_SONG)))) {
+                    songId = c.getString(c.getColumnIndex(MusicContentProvider.PATH_TO_MUSIC));
+                    textViewTitle.setText(data);
+                    textViewSinger.setText(c.getString(c.getColumnIndex(MusicContentProvider.SINGER_NAME)));
+                    textViewGenre.setText(c.getString(c.getColumnIndex(MusicContentProvider.GENRE_OF_MUSIC)));
+                    Toast.makeText(getBaseContext(),
+                            songId + "", Toast.LENGTH_LONG).show();
+                    saveData(context, songId);
+                    savePosition(0);
+                }
+
+            } while (c.moveToNext());
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

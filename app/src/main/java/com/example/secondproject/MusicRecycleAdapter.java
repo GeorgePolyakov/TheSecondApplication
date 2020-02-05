@@ -74,7 +74,7 @@ public class MusicRecycleAdapter extends RecyclerView.Adapter< MusicRecycleAdapt
         }
 
         public void Send(String key) {
-            final IntentFilter intentFilter = new IntentFilter("xyi");
+            final IntentFilter intentFilter = new IntentFilter("data");
             parent.registerReceiver(myBroadcastReceiver, intentFilter);
             Intent intent = new Intent("data");
             intent.putExtra("data", key);
