@@ -56,7 +56,6 @@ public class PickSingerActivity extends AppCompatActivity {
         String URL = "content://com.example.secondproject.MusicContentProvider/friends";
         Uri friends = Uri.parse(URL);
         Cursor c = getContentResolver().query(friends, null, null, null, "title");
-        String result = "Javacodegeeks Results:";
         if (!c.moveToFirst()) {
         } else {
             do {

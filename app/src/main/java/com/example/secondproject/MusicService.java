@@ -29,7 +29,11 @@ public class MusicService extends Service {
     }
 
     public int playerPause() {
-        player.pause();
+        if (player.isPlaying()) {
+            player.pause();
+            player.seekTo(player.getCurrentPosition());
+        }
+
         return player.getCurrentPosition();
     }
 
@@ -37,12 +41,10 @@ public class MusicService extends Service {
         player.pause();
     }
 
-    public int playerStart(int musicPosition,String songId) {
+    public int playerStart(int musicPosition, String songId) {
         Resources res = this.getResources();
         int soundId = res.getIdentifier(songId, "raw", this.getPackageName());
         mediaPath = Uri.parse("android.resource://" + getPackageName() + "/" + soundId);
-        Toast.makeText(getBaseContext(),
-                songId + "", Toast.LENGTH_LONG).show();
         try {
             player.setDataSource(getApplicationContext(), mediaPath);
             player.prepare();
@@ -50,14 +52,19 @@ public class MusicService extends Service {
             e.printStackTrace();
         }
         player.seekTo(musicPosition);
-            player.start();
+        player.start();
 
-        return  player.getCurrentPosition();
+        return player.getCurrentPosition();
+    }
+
+    public void destroyPlayer() {
+        player.release();
+        player = null;
     }
 
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         super.onDestroy();
+
     }
 }

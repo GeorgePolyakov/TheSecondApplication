@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void setStarttingValueTextView(String keyString) {
+    public void setStartingValueTextView(String keyString) {
         String URL = "content://com.example.secondproject.MusicContentProvider/friends";
         Uri friends = Uri.parse(URL);
         Cursor c = getContentResolver().query(friends, null, null, null, "title");
@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
                     textViewSinger.setText(c.getString(c.getColumnIndex(MusicContentProvider.SINGER_NAME)));
                     textViewGenre.setText(c.getString(c.getColumnIndex(MusicContentProvider.GENRE_OF_MUSIC)));
                 }
-
             } while (c.moveToNext());
         }
     }
@@ -82,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         fiilDatabase();
         context = this;
         songId = loadData(this);
-        setStarttingValueTextView(songId);
+        setStartingValueTextView(songId);
         IntentFilter filter = new IntentFilter();
         filter.addAction("data");
         getKeyReciver = new BroadcastReceiver() {
@@ -106,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                                     songId + "", Toast.LENGTH_LONG).show();
                             saveData(context, songId);
                             savePosition(0);
+                            mService.destroyPlayer();
                         }
 
                     } while (c.moveToNext());
