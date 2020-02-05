@@ -18,10 +18,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import org.xmlpull.v1.XmlPullParser;
@@ -43,11 +41,7 @@ public class MainActivity extends AppCompatActivity {
     BroadcastReceiver getKeyReciver;
     Context context;
     String data = "";
-    private RecyclerView recycleView;
-    private RecyclerView.Adapter adapter;
-    private ArrayList<Music> music;
     private static final String SHARED_PREFS = "sharedPrefs";
-
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -72,10 +66,8 @@ public class MainActivity extends AppCompatActivity {
         textViewGenre = findViewById(R.id.textView3);
         fiilDatabase();
         context = this;
-
         songId = loadData(this);
-        Toast.makeText(getBaseContext(),
-                songId + "", Toast.LENGTH_LONG).show();
+
         IntentFilter filter = new IntentFilter();
         filter.addAction("data");
         getKeyReciver = new BroadcastReceiver() {
@@ -103,8 +95,6 @@ public class MainActivity extends AppCompatActivity {
 
                     } while (c.moveToNext());
                 }
-
-
             }
         };
         registerReceiver(getKeyReciver, filter);
@@ -122,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
         editor.putString("KEY", position);
         editor.apply();
     }
-
 
     @Override
     protected void onStart() {

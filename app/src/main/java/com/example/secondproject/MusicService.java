@@ -26,9 +26,7 @@ public class MusicService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         player = new MediaPlayer();
-        //player = MediaPlayer.create(this, R.raw.rains_is_guns);
         String path = "rains_is_guns";
-        //int soundId = res.getIdentifier(path, "raw", this.getPackageName());
         return mBinder;
     }
 

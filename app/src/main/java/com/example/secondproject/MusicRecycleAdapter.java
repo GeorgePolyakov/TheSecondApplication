@@ -64,14 +64,12 @@ public class MusicRecycleAdapter extends RecyclerView.Adapter< MusicRecycleAdapt
 
         public  MusicViewHolder(@NonNull View itemView) {
             super(itemView);
-            listItemNumberView = itemView.findViewById(R.id.tv_number_item);  //конвертируем TextView в объкты java
+            listItemNumberView = itemView.findViewById(R.id.tv_number_item);
             viewHolderIndex = itemView.findViewById(R.id.tv_view_holder_number);
-            int positionX = getAdapterPosition();
             itemView.setOnClickListener(this);
         }
 
         void bind(int ListIndex) {
-            //viewHolderIndex.setText(song.get(ListIndex));
             listItemNumberView.setText(song.get(ListIndex));
         }
 
@@ -81,7 +79,6 @@ public class MusicRecycleAdapter extends RecyclerView.Adapter< MusicRecycleAdapt
             Intent intent = new Intent("data");
             intent.putExtra("data", key);
             parent.sendBroadcast(intent);
-
         }
 
         @Override
@@ -89,7 +86,6 @@ public class MusicRecycleAdapter extends RecyclerView.Adapter< MusicRecycleAdapt
 
             Send(listItemNumberView.getText().toString());
             Toast.makeText(v.getContext(),  listItemNumberView.getText(), Toast.LENGTH_LONG).show();
-
             ((Activity) parent).finish();
             parent.unregisterReceiver(myBroadcastReceiver);
 
