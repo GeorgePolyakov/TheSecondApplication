@@ -1,6 +1,7 @@
 package com.example.secondproject;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentValues;
@@ -19,8 +20,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
@@ -84,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                             textViewGenre.setText(c.getString(c.getColumnIndex(MusicContentProvider.GENRE_OF_MUSIC)));
                             Toast.makeText(getBaseContext(),
                                     songId + "", Toast.LENGTH_LONG).show();
-                            saveData(context,songId);
+                            saveData(context, songId);
                             savePosition(0);
                         }
 
@@ -101,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         return text;
     }
 
-    public static void saveData(Context context,String position) {
+    public static void saveData(Context context, String position) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("KEY", position);
@@ -163,10 +166,6 @@ public class MainActivity extends AppCompatActivity {
         Uri friends = Uri.parse(URL);
         int count = getContentResolver().delete(
                 friends, null, null);
-        String countNum = "Javacodegeeks: " + count + " records are deleted.";
-        Toast.makeText(getBaseContext(),
-                countNum, Toast.LENGTH_LONG).show();
-
     }
 
     public void fiilDatabase() {

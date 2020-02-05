@@ -58,7 +58,6 @@ public class PickSingerActivity extends AppCompatActivity {
         Cursor c = getContentResolver().query(friends, null, null, null, "title");
         String result = "Javacodegeeks Results:";
         if (!c.moveToFirst()) {
-            Toast.makeText(this, result + " no content yet!", Toast.LENGTH_LONG).show();
         } else {
             do {
                  if(state==true) {
@@ -72,7 +71,6 @@ public class PickSingerActivity extends AppCompatActivity {
                  }
 
             } while (c.moveToNext());
-            Toast.makeText(this, result, Toast.LENGTH_LONG).show();
         }
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         songList = findViewById(R.id.recyclerView);
