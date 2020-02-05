@@ -2,5 +2,6 @@
 <resources>
     <dimen name="activity_horisontal_margin">16dp</dimen>
     <dimen name="textViewTitleSize">32sp</dimen>
-    <dimen name="aoinnerWidth">409dp</dimen>
+    <dimen name="spinnerWidth">409dp</dimen>
+    <dimen name="spinnerMarginTop">280dp</dimen>
 </resources>

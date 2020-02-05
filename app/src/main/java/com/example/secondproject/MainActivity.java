@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 if (intent != null)
                     Toast.makeText(context, intent.getStringExtra("data").toString(), Toast.LENGTH_LONG).show();
-               // onStop();
                 String URL = "content://com.example.secondproject.MusicContentProvider/friends";
                 Uri friends = Uri.parse(URL);
                 data = intent.getExtras().getString("data");
@@ -156,7 +155,6 @@ public class MainActivity extends AppCompatActivity {
     public void onClickPick(View v) {
         Intent intent = new Intent(this, PickSingerActivity.class);
         startActivity(intent);
-        //   onStop();
     }
 
     public void deleteAllBirthdays() {

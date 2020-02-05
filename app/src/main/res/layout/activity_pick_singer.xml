@@ -19,7 +19,7 @@
 
     <Spinner
         android:id="@+id/pickSinger"
-        android:layout_width="409dp"
+        android:layout_width="@dimen/spinnerWidth"
         android:layout_height="wrap_content"
         android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/pickGenre"
@@ -29,7 +29,7 @@
 
     <Spinner
         android:id="@+id/pickGenre"
-        android:layout_width="409dp"
+        android:layout_width="@dimen/spinnerWidth"
         android:layout_height="wrap_content"
         android:layout_marginTop="280dp"
         android:gravity="center"
