@@ -55,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void deleteAllBirthdays() {
+    public void deleteAllMusics() {
         // delete all the records and the table of the database provider
         String URL = "content://com.example.secondproject.MusicContentProvider/friends";
         Uri friends = Uri.parse(URL);
@@ -169,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void fiilDatabase() {
-        deleteAllBirthdays();
+        deleteAllMusics();
         ContentValues values = new ContentValues();
         Resources res = this.getResources();
         XmlResourceParser _xml = res.getXml(R.xml.fill_music_data);
