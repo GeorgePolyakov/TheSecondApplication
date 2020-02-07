@@ -193,11 +193,8 @@ public class MainActivity extends AppCompatActivity {
                 }
                 eventType = xmlResParser.next();
             }
-        } catch (XmlPullParserException e) {
+        } catch (XmlPullParserException | IOException e) {
             Log.e("Test", e.getMessage(), e);
-        } catch (IOException e) {
-            Log.e("Test", e.getMessage(), e);
-
         } finally {
             xmlResParser.close();
         }
