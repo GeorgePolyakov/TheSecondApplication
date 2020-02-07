@@ -188,8 +188,7 @@ public class MainActivity extends AppCompatActivity {
                     values.put(MusicContentProvider.SINGER_NAME, singerName);
                     values.put(MusicContentProvider.GENRE_OF_MUSIC, genreName);
                     values.put(MusicContentProvider.PATH_TO_MUSIC, pathMusic);
-                    Uri uri = getContentResolver().insert(
-                            MusicContentProvider.CONTENT_URI, values);
+                    Uri uri = getContentResolver().insert(MusicContentProvider.CONTENT_URI, values);
                 }
                 eventType = xmlResParser.next();
             }
