@@ -4,4 +4,6 @@
     <dimen name="textViewTitleSize">32sp</dimen>
     <dimen name="spinnerWidth">409dp</dimen>
     <dimen name="spinnerMarginTop">280dp</dimen>
+    <dimen name="pickSingerActivityMarginTop">280dp</dimen>
+    <dimen name="spinnerTetxSize">32sp</dimen>
 </resources>

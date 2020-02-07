@@ -3,32 +3,68 @@ package com.example.secondproject;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+import android.content.BroadcastReceiver;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-
+import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class PickSingerActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-
-    Spinner spinnerSinger;
-    Spinner spinnerGenre;
-    List listSpinnerSingerAdapter;
-    List spinnerGenreAdapter;
-    String authorName;
-    String genre;
-    ArrayAdapter<String> singerAdapter;
-    int state = 0;
+public class PickSingerActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, MusicRecycleAdapter.OnRecycleViewMusicListener {
+    private Spinner spinnerSinger;
+    private Spinner spinnerGenre;
+    private List listSpinnerSingerAdapter;
+    private List spinnerGenreAdapter;
+    private String authorName;
+    private String genre;
+    private BroadcastReceiver myBroadcastReceiver;
     private RecyclerView songList;
     private MusicRecycleAdapter musicRecycleAdapter;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        myBroadcastReceiver = new MyReceiver();
+        setContentView(R.layout.activity_pick_singer);
+        fillAdapter();
+        spinnerSinger = findViewById(R.id.pickSinger);
+        spinnerGenre = findViewById(R.id.pickGenre);
+
+        ArrayAdapter<String> singerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, listSpinnerSingerAdapter);
+        singerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerSinger.setAdapter(singerAdapter);
+        spinnerSinger.setOnItemSelectedListener(this);
+
+        ArrayAdapter<String> genreAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerGenreAdapter);
+        genreAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerGenre.setAdapter(genreAdapter);
+        spinnerGenre.setOnItemSelectedListener(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("TagStop", "Called onStart PickSinger");
+        final IntentFilter intentFilter = new IntentFilter("data");
+        registerReceiver(myBroadcastReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("TagStop", "Called stop");
+        unregisterReceiver(myBroadcastReceiver);
+    }
 
     public void fillAdapter() {
         listSpinnerSingerAdapter = new ArrayList();
@@ -73,9 +109,8 @@ public class PickSingerActivity extends AppCompatActivity implements AdapterView
         songList = findViewById(R.id.recyclerView);
         songList.setLayoutManager(layoutManager);
         songList.setHasFixedSize(true);
-        musicRecycleAdapter = new MusicRecycleAdapter(songCurrentSinger.size(), this, songCurrentSinger);
+        musicRecycleAdapter = new MusicRecycleAdapter(songCurrentSinger.size(), this, songCurrentSinger, this);
         songList.setAdapter(musicRecycleAdapter);
-
     }
 
     public List sortAdapter(List spinnerAdapter) {
@@ -85,26 +120,10 @@ public class PickSingerActivity extends AppCompatActivity implements AdapterView
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pick_singer);
-        fillAdapter();
-        spinnerSinger = findViewById(R.id.pickSinger);
-        spinnerGenre = findViewById(R.id.pickGenre);
-
-        ArrayAdapter<String> singerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, listSpinnerSingerAdapter);
-        singerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerSinger.setAdapter(singerAdapter);
-        spinnerSinger.setOnItemSelectedListener(this);
-        ArrayAdapter<String> genreAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerGenreAdapter);
-        genreAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerGenre.setAdapter(genreAdapter);
-        spinnerGenre.setOnItemSelectedListener(this);
-    }
-
-    @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if (parent.equals(singerAdapter)) {
+        Log.d("SelectedLOg", parent.toString());
+        Toast.makeText(this, spinnerSinger.getId() + "", Toast.LENGTH_SHORT).show();
+        if (spinnerSinger.getId() == parent.getId()) {
             authorName = spinnerSinger.getSelectedItem().toString();
             recycleFiller(true);
         } else {
@@ -118,4 +137,12 @@ public class PickSingerActivity extends AppCompatActivity implements AdapterView
         //Nothing TODO
     }
 
+    @Override
+    public void onMusicRecycleClick(String key) {
+        Toast.makeText(this, key + " ", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent("data");
+        intent.putExtra("data", key);
+        sendBroadcast(intent);
+        this.finish();
+    }
 }

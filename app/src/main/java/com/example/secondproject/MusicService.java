@@ -7,13 +7,18 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
-import android.widget.Toast;
 
 public class MusicService extends Service {
 
     private final IBinder mBinder = new LocalBinder();
-    private MediaPlayer player;
+
+    public MediaPlayer getPlayer() {
+        return player;
+    }
+
+    private MediaPlayer player = new MediaPlayer();
     Uri mediaPath;
+
 
     public class LocalBinder extends Binder {
         MusicService getService() {
@@ -23,25 +28,29 @@ public class MusicService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        player = new MediaPlayer();
+
         return mBinder;
     }
 
     public int playerPause() {
+
         if (player.isPlaying()) {
             player.pause();
-            player.seekTo(player.getCurrentPosition());
         }
-
         return player.getCurrentPosition();
     }
 
     public void playerStop() {
-        player.pause();
+        if (player.isPlaying()) {
+            player.pause();
+        }
     }
 
     public int playerStart(int musicPosition, String songId) {
         Resources res = this.getResources();
+        if (player == null) {
+            player = new MediaPlayer();
+        }
         int soundId = res.getIdentifier(songId, "raw", this.getPackageName());
         mediaPath = Uri.parse("android.resource://" + getPackageName() + "/" + soundId);
         try {
@@ -60,9 +69,4 @@ public class MusicService extends Service {
         player = null;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-    }
 }

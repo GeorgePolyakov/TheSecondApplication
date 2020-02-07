@@ -11,7 +11,7 @@ public class MyReceiver extends BroadcastReceiver
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        String data = intent.getExtras().getString("xyi");
+        String data = intent.getExtras().getString("number");
         Toast.makeText(context, "Broadcast Received with data " + data, Toast.LENGTH_LONG).show();
     }
 

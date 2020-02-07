@@ -2,6 +2,7 @@ package com.example.secondproject;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentValues;
@@ -26,20 +27,22 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 
+import static com.example.secondproject.MusicUtilty.sPref;
+
 public class MainActivity extends AppCompatActivity {
 
     MusicService mService;
     boolean mBound = false;
     public int musicPosition = 0;
-    SharedPreferences sPref;
     String songId;
-    TextView textViewTitle;
-    TextView textViewSinger;
-    TextView textViewGenre;
-    BroadcastReceiver getKeyReciver;
-    Context context;
-    String data = "";
+
+    IntentFilter filter;
     private static final String SHARED_PREFS = "sharedPrefs";
+    private String data = "";
+    private TextView textViewTitle;
+    private TextView textViewSinger;
+    private TextView textViewGenre;
+    BroadcastReceiver getKeyReciver;
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -55,45 +58,19 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void setStartingValueTextView(String keyString) {
-        String URL = "content://com.example.secondproject.MusicContentProvider/friends";
-        Uri friends = Uri.parse(URL);
-        Cursor c = getContentResolver().query(friends, null, null, null, "title");
-        if (c.moveToFirst()) {
-            Toast.makeText(context, keyString, Toast.LENGTH_LONG).show();
-            do {
-                if (keyString.equals(c.getString(c.getColumnIndex(MusicContentProvider.PATH_TO_MUSIC)))) {
-                    textViewTitle.setText(c.getString(c.getColumnIndex(MusicContentProvider.TITLE_OF_SONG)));
-                    textViewSinger.setText(c.getString(c.getColumnIndex(MusicContentProvider.SINGER_NAME)));
-                    textViewGenre.setText(c.getString(c.getColumnIndex(MusicContentProvider.GENRE_OF_MUSIC)));
-                }
-            } while (c.moveToNext());
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        textViewTitle = findViewById(R.id.titleOfSong);
-        textViewSinger = findViewById(R.id.textView2);
-        textViewGenre = findViewById(R.id.textView3);
+        initializeActivityValue();
         fiilDatabase();
-        context = this;
-        songId = loadData(this);
-        setStartingValueTextView(songId);
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("data");
         getKeyReciver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (intent != null)
-                    Toast.makeText(context, intent.getStringExtra("data").toString(), Toast.LENGTH_LONG).show();
                 String URL = "content://com.example.secondproject.MusicContentProvider/friends";
                 Uri friends = Uri.parse(URL);
                 data = intent.getExtras().getString("data");
                 Cursor c = getContentResolver().query(friends, null, null, null, "title");
-
                 if (c.moveToFirst()) {
                     do {
                         if (data.equals(c.getString(c.getColumnIndex(MusicContentProvider.TITLE_OF_SONG)))) {
@@ -101,10 +78,8 @@ public class MainActivity extends AppCompatActivity {
                             textViewTitle.setText(data);
                             textViewSinger.setText(c.getString(c.getColumnIndex(MusicContentProvider.SINGER_NAME)));
                             textViewGenre.setText(c.getString(c.getColumnIndex(MusicContentProvider.GENRE_OF_MUSIC)));
-                            Toast.makeText(getBaseContext(),
-                                    songId + "", Toast.LENGTH_LONG).show();
-                            saveData(context, songId);
-                            savePosition(0);
+                            MusicUtilty.saveData(context, songId);
+                            MusicUtilty.savePosition(((Activity) context), 0);
                             mService.destroyPlayer();
                         }
 
@@ -115,21 +90,9 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(getKeyReciver, filter);
     }
 
-    public static String loadData(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        String text = sharedPreferences.getString("KEY", "");
-        return text;
-    }
-
-    public static void saveData(Context context, String position) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("KEY", position);
-        editor.apply();
-    }
-
     @Override
     protected void onStart() {
+        Log.d("TagStop", "Called onStart");
         super.onStart();
         Intent intent = new Intent(this, MusicService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -138,37 +101,33 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        Log.d("TagStop", "Called stop");
         if (mBound) {
-            unbindService(mConnection);
-            mBound = false;
+            if (!mService.getPlayer().isPlaying()) {
+                unbindService(mConnection);
+                mBound = false;
+            }
         }
-    }
-
-    public void savePosition(int position) {
-        sPref = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor ed = sPref.edit();
-        ed.putInt("musicPositionKey", position);
-        ed.commit();
     }
 
     public void onClickStart(View v) {
         if (mBound) {
             sPref = getPreferences(MODE_PRIVATE);
             musicPosition = sPref.getInt("musicPositionKey", 0);
-            savePosition(mService.playerStart(musicPosition, songId));
+            MusicUtilty.savePosition(this, mService.playerStart(musicPosition, songId));
         }
     }
 
     public void onClickPause(View v) {
         if (mBound) {
-            savePosition(mService.playerPause());
+            MusicUtilty.savePosition(this, mService.playerPause());
         }
     }
 
     public void onClickStop(View v) {
         if (mBound) {
             mService.playerStop();
-            savePosition(0);
+            MusicUtilty.savePosition(this, 0);
         }
     }
 
@@ -183,6 +142,32 @@ public class MainActivity extends AppCompatActivity {
         Uri friends = Uri.parse(URL);
         int count = getContentResolver().delete(
                 friends, null, null);
+    }
+
+    public void initializeActivityValue() {
+        textViewTitle = findViewById(R.id.titleOfSong);
+        textViewSinger = findViewById(R.id.textViewPlay);
+        textViewGenre = findViewById(R.id.textViewPause);
+        songId = MusicUtilty.loadData(this);
+        setStartingValueTextView(songId);
+        filter = new IntentFilter();
+        filter.addAction("data");
+
+    }
+
+    public void setStartingValueTextView(String keyString) {
+        String URL = "content://com.example.secondproject.MusicContentProvider/friends";
+        Uri friends = Uri.parse(URL);
+        Cursor c = getContentResolver().query(friends, null, null, null, "title");
+        if (c.moveToFirst()) {
+            do {
+                if (keyString.equals(c.getString(c.getColumnIndex(MusicContentProvider.PATH_TO_MUSIC)))) {
+                    textViewTitle.setText(c.getString(c.getColumnIndex(MusicContentProvider.TITLE_OF_SONG)));
+                    textViewSinger.setText(c.getString(c.getColumnIndex(MusicContentProvider.SINGER_NAME)));
+                    textViewGenre.setText(c.getString(c.getColumnIndex(MusicContentProvider.GENRE_OF_MUSIC)));
+                }
+            } while (c.moveToNext());
+        }
     }
 
     public void fiilDatabase() {
@@ -217,6 +202,5 @@ public class MainActivity extends AppCompatActivity {
             xmlResParser.close();
         }
     }
-
 
 }

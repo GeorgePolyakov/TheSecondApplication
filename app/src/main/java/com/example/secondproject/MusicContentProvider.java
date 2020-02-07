@@ -17,7 +17,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 public class MusicContentProvider extends ContentProvider {
-
     static final String PROVIDER_NAME = "com.example.secondproject.MusicContentProvider";
     static final String URL = "content://" + PROVIDER_NAME + "/friends";
     static final Uri CONTENT_URI = Uri.parse(URL);
@@ -31,24 +30,17 @@ public class MusicContentProvider extends ContentProvider {
     static final UriMatcher uriMatcher;
     private static HashMap<String, String> BirthMap;
     DBHelper dbHelper;
+    private SQLiteDatabase database;
+    static final String DATABASE_NAME = "BirthdayReminder";
+    static final String TABLE_NAME = "birthTable";
+    static final int DATABASE_VERSION = 1;
+    static final String CREATE_TABLE = " CREATE TABLE " + TABLE_NAME + " (id INTEGER PRIMARY KEY AUTOINCREMENT, " + " title TEXT NOT NULL, " + " name TEXT NOT NULL, " + " genre TEXT NOT NULL, " + " path TEXT NOT NULL);";
 
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(PROVIDER_NAME, "friends", FRIENDS);
         uriMatcher.addURI(PROVIDER_NAME, "friends/#", FRIENDS_ID);
     }
-
-    private SQLiteDatabase database;
-    static final String DATABASE_NAME = "BirthdayReminder";
-    static final String TABLE_NAME = "birthTable";
-    static final int DATABASE_VERSION = 1;
-    static final String CREATE_TABLE =
-            " CREATE TABLE " + TABLE_NAME +
-                    " (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    " title TEXT NOT NULL, " +
-                    " name TEXT NOT NULL, " +
-                    " genre TEXT NOT NULL, " +
-                    " path TEXT NOT NULL);";
 
     private static class DBHelper extends SQLiteOpenHelper {
 
@@ -104,9 +96,7 @@ public class MusicContentProvider extends ContentProvider {
         }
         Cursor cursor = queryBuilder.query(database, projection, selection,
                 selectionArgs, null, null, sortOrder);
-
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
-
         return cursor;
     }
 
@@ -121,7 +111,8 @@ public class MusicContentProvider extends ContentProvider {
             getContext().getContentResolver().notifyChange(newUri, null);
             return newUri;
         }
-        throw new SQLException("Fail to add a new record into " + uri);
+        Log.d("dbFailure", "Fail to add a new record into " + uri);
+        return null;
     }
 
     @Override
@@ -141,7 +132,7 @@ public class MusicContentProvider extends ContentProvider {
                                 selection + ')' : ""), selectionArgs);
                 break;
             default:
-                throw new IllegalArgumentException("Unsupported URI " + uri);
+                Log.d("dbFailure ", "Unsupported URI" + uri);
         }
         getContext().getContentResolver().notifyChange(uri, null);
         return count;
@@ -163,7 +154,7 @@ public class MusicContentProvider extends ContentProvider {
                                 selection + ')' : ""), selectionArgs);
                 break;
             default:
-                throw new IllegalArgumentException("Unsupported URI " + uri);
+                Log.d("dbFailure ", "Unsupported URI" + uri);
         }
 
         getContext().getContentResolver().notifyChange(uri, null);
@@ -172,18 +163,14 @@ public class MusicContentProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
-        // TODO Auto-generated method stub
         switch (uriMatcher.match(uri)) {
-            // Get all friend-birthday records
             case FRIENDS:
                 return "vnd.android.cursor.dir/vnd.example.friends";
-            // Get a particular friend
             case FRIENDS_ID:
                 return "vnd.android.cursor.item/vnd.example.friends";
             default:
-                throw new IllegalArgumentException("Unsupported URI: " + uri);
+                Log.d("dbFailure ", "Unsupported URI" + uri);
+                return null;
         }
     }
-
-
 }
